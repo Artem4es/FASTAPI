@@ -29,6 +29,14 @@ Cоздать и запустить контейнеры:
 docker compose up -d
 ```
 
+Создать 2 папки для mp3 и wav:
+
+```
+docker compose exec backend mkdir uploads/
+docker compose exec backend mkdir uploads/mp3/
+docker compose exec backend mkdir uploads/wav/
+```
+
 Применить миграции (они уже созданы) через alembic:
 
 ```
