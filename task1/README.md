@@ -10,8 +10,16 @@ alembic init migrations
 - Дальше идём в папку с миграциями и открываем env.py, там вносим изменения в блок, где написано 
 
 ```
-from myapp import mymodel
+from myapp import mymodel 
+имортиируем сюда Base из нашей папки с моделями
 ```
+
+будет что-то вроде:
+```
+from auth.database import Base
+target_metadata = Base.metadata 
+```
+Этот Base нужно импортировать из последнего модуля в котором он применялся
 
 - Дальше вводим: ```alembic revision --autogenerate -m "comment"```
 - Будет создана миграция

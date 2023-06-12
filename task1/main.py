@@ -33,8 +33,9 @@ async_session = sessionmaker(
 ##############################
 # BLOCK WITH DATABASE MODELS #
 ##############################
-
-Base = declarative_base()
+from sqlalchemy.orm import DeclarativeBase
+class Base(DeclarativeBase):
+    pass
 
 
 class Question(Base):
