@@ -57,7 +57,7 @@ async def get_audio(file_uuid: str, user_uuid: str) -> str:
     async with async_session() as session:
         async with session.begin():
             q = select(Audio).filter(
-                Audio.id == file_uuid, Audio.user_id == user_uuid)  
+                Audio.id == file_uuid, Audio.user_id == user_uuid)
             result = await session.execute(q)
             audio = result.scalar()
             return audio
@@ -120,9 +120,9 @@ async def create_upload_file(file: UploadFile, request: Request, user: User = De
         audio_id = await save_audio(filename=new_filename, filepath=new_path, user_id=user.id)
     except Exception as e:
         raise e
-    finally:
-        base_url = str(request.base_url) # Получаем базовый URL сервера
-        download_url = f"{base_url}record?id={audio_id}&user={user.id}"
-        return download_url
+    # finally:
+    base_url = str(request.base_url) # Получаем базовый URL сервера
+    download_url = f"{base_url}record?id={audio_id}&user={user.id}"
+    return download_url
 
 app.include_router(router, prefix='')
