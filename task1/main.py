@@ -12,6 +12,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 import settings
 
+
 BASE_URL = 'https://jservice.io/api/random?count='
 
 ##############################################
@@ -33,9 +34,11 @@ async_session = sessionmaker(
 ##############################
 # BLOCK WITH DATABASE MODELS #
 ##############################
-from sqlalchemy.orm import DeclarativeBase
-class Base(DeclarativeBase):
-    pass
+
+
+# class Base(DeclarativeBase):
+#     pass
+Base = declarative_base()
 
 
 class Question(Base):

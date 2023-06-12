@@ -9,6 +9,7 @@ from pydub import AudioSegment
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.future import select
 from sqlalchemy.orm import sessionmaker
+import uvicorn
 
 from auth.auth import auth_backend
 from auth.database import User
@@ -111,7 +112,7 @@ async def create_upload_file(file: UploadFile, request: Request, user: User = De
         with open(wav_path, "wb") as f:
             f.write(await file.read())
             f.close()
-        sound = AudioSegment.from_wav(wav_path)  # apt install ffmpeg
+        sound = AudioSegment.from_wav(wav_path)
         base_name = os.path.splitext(file.filename)[0]
         new_filename = f'{base_name}.mp3'
         new_path = os.path.join(AUDIO_DIR, "mp3", new_filename)
@@ -120,9 +121,11 @@ async def create_upload_file(file: UploadFile, request: Request, user: User = De
         audio_id = await save_audio(filename=new_filename, filepath=new_path, user_id=user.id)
     except Exception as e:
         raise e
-    # finally:
     base_url = str(request.base_url) # Получаем базовый URL сервера
     download_url = f"{base_url}record?id={audio_id}&user={user.id}"
     return download_url
 
 app.include_router(router, prefix='')
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
