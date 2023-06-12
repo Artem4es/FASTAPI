@@ -1,5 +1,5 @@
-### [Что это за FASTAPI?] :smiley_cat: 
-TASK2 -это API реализованный на FastAPI (простите за тавтологию), с возможностью регистрации, авторизации по JWT-токену через cookie transport.
+### [Что это за TASK2?] :smiley_cat: 
+TASK2 -это API реализованный на FastAPI (простите за тавтологию ещё раз:), с возможностью регистрации, авторизации по JWT-токену через cookie transport.
 С помощью этого сервиса возможно преобразование аудиозаписей из формата wav в формат mp3. Каждый авторизованный
 пользователь может загружать свои аудиозаписи и скачивать их в преобразованном виде!
 
@@ -19,7 +19,7 @@ cd task2
 Создать файл .env с переменными окружения и содержимым:
 
 ```
-REAL_DATABASE_URL="postgresql+asyncpg://postgres:postgres@db:5432/postgres"
+REAL_DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
 POSTGRES_PASSWORD=postgres
 ```
 
