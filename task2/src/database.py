@@ -3,14 +3,17 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-import settings
+import src.settings as settings
+
+Base = declarative_base()
 
 # create async engine for interaction with database
 engine = create_async_engine(
     settings.REAL_DATABASE_URL, future=True, echo=True
 )
+
 
 # create session for the interaction with database
 async_session = sessionmaker(

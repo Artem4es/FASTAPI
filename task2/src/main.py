@@ -6,35 +6,18 @@ from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.routing import APIRouter
 from fastapi_responses import custom_openapi
-from fastapi_users import FastAPIUsers
 from pydub import AudioSegment
 from pydub.exceptions import CouldntDecodeError
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.future import select
-from sqlalchemy.orm import sessionmaker
 
 from audio.models import Audio
+from audio.resoponses import responses
 from audio.schemas import RespUrlModel
-from auth.base_config import auth_backend
-from auth.manager import current_active_user, get_user_manager
+from auth.manager import current_active_user
 from auth.models import User
-from auth.schemas import UserCreate, UserRead
-from database import async_session
-from settings import AUDIO_DIR, REAL_DATABASE_URL
-
-##############################################
-# BLOCK FOR COMMON INTERACTION WITH DATABASE #
-##############################################
-
-
-# create async engine for interaction with database
-# engine = create_async_engine(REAL_DATABASE_URL, future=True, echo=True)
-
-# create session for the interaction with database
-# async_session = sessionmaker(
-#     engine, expire_on_commit=False, class_=AsyncSession
-# )
-
+from auth.router import router as auth_router
+from database import async_session_maker
+from settings import AUDIO_DIR
 
 ###########################################################
 # BLOCK FOR INTERACTION WITH DATABASE IN BUSINESS CONTEXT #
@@ -43,7 +26,8 @@ from settings import AUDIO_DIR, REAL_DATABASE_URL
 
 async def save_audio(filename: str, filepath: str, user_id: str) -> str:
     """Save audio ref in db"""
-    async with async_session() as session:
+    # async with async_session() as session:
+    async with async_session_maker() as session:
         async with session.begin():
             new_audio = Audio(
                 filename=filename, filepath=filepath, user_id=user_id
@@ -55,7 +39,7 @@ async def save_audio(filename: str, filepath: str, user_id: str) -> str:
 
 async def get_audio(file_uuid: str, user_uuid: str) -> str:
     """Save audio ref in db"""
-    async with async_session() as session:
+    async with async_session_maker() as session:
         async with session.begin():
             q = select(Audio).filter(
                 Audio.id == file_uuid, Audio.user_id == user_uuid
@@ -70,30 +54,31 @@ async def get_audio(file_uuid: str, user_uuid: str) -> str:
 #########################
 
 
-fastapi_users = FastAPIUsers[User, uuid.UUID](
-    get_user_manager,
-    [auth_backend],
-)
+# fastapi_users = FastAPIUsers[User, uuid.UUID](
+#     get_user_manager,
+#     [auth_backend],
+# )
 
 
 app = FastAPI()
 
-app.openapi = custom_openapi(app)
+# app.openapi = custom_openapi(app)
 
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/jwt",
-    tags=["auth"],
-)
+app.include_router(auth_router)  # , prefix='/', tags=['auth'])
+# app.include_router(
+#     fastapi_users.get_auth_router(auth_backend),
+#     prefix="/auth/jwt",
+#     tags=["auth"],
+# )
 
 
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
+# app.include_router(
+#     fastapi_users.get_register_router(UserRead, UserCreate),
+#     prefix="/auth",
+#     tags=["auth"],
+# )
 
-current_user = fastapi_users.current_user()
+# current_user = fastapi_users.current_user()
 
 
 router = APIRouter()
@@ -114,11 +99,7 @@ async def get_record(
     )
 
 
-# class RespUrlModel(BaseModel):
-#     download_link: str
-
-
-@router.post("/uploadfile/")
+@router.post("/uploadfile/", responses=responses)
 async def create_upload_file(
     file: UploadFile,
     request: Request,
@@ -126,21 +107,25 @@ async def create_upload_file(
 ) -> RespUrlModel:
     try:
         wav_path = os.path.join(AUDIO_DIR, "wav", file.filename)
-        with open(wav_path, "wb") as f:
+        with open(
+            wav_path, "wb"
+        ) as f:  # в данном случае возможно лучше использовать синхронную функ
+            # может использовть aiofiles
             f.write(await file.read())
             f.close()
         sound = AudioSegment.from_wav(wav_path)
         base_name = os.path.splitext(file.filename)[0]
         new_filename = f'{base_name}.mp3'
         new_path = os.path.join(AUDIO_DIR, "mp3", new_filename)
-        sound.export(new_path, format="mp3")
+        sound.export(new_path, format="mp3")  # правда тут будет тормоз
 
         audio_id = await save_audio(
             filename=new_filename, filepath=new_path, user_id=user.id
         )
-    except CouldntDecodeError:
+    except (CouldntDecodeError, IndexError):  # IndexError for .jpg
         raise HTTPException(
-            400, 'Убедитесь, что загружаете файл с расширением wav'
+            status_code=400,
+            detail="Убедитесь, что загружаете файл в формате .wav",
         )
 
     base_url = str(request.base_url)  # Получаем базовый URL сервера
