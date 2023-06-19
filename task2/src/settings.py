@@ -13,5 +13,5 @@ REAL_DATABASE_URL = env.str(
 )  # connect string for the database
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 AUDIO_DIR = os.path.join(BASE_DIR, 'uploads')
