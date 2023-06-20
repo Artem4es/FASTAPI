@@ -46,8 +46,7 @@ async def create_upload_file(
             f.write(await file.read())
             f.close()
         sound = AudioSegment.from_wav(wav_path)
-        base_name = os.path.splitext(file.filename)[0]
-        new_filename = f'{base_name}.mp3'
+        new_filename = f'{uuid.uuid4()}.mp3'
         new_path = os.path.join(AUDIO_DIR, "mp3", new_filename)
         sound.export(new_path, format="mp3")  # правда тут будет тормоз
 

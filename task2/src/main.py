@@ -7,9 +7,7 @@ from auth.router import router as auth_router
 app = FastAPI()
 
 
-app.include_router(auth_router)
-
-
+app.include_router(auth_router, tags=["auth"])
 app.include_router(audio_router, tags=["audio"])
 
 if __name__ == "__main__":
