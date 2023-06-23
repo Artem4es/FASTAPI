@@ -11,10 +11,10 @@ TASK2 -это API реализованный на FastAPI (простите за
 ```
 git clone git@github.com:Artem4es/FASTAPI.git
 ```
-Перейти в папку /task2
+Перейти в папку /infra
 
 ```
-cd task2
+cd task2/infra/
 ```
 Создать файл .env с переменными окружения и содержимым:
 
@@ -32,7 +32,7 @@ docker compose up -d
 Применить миграции (они уже созданы) через alembic:
 
 ```
-docker compose exec --workdir /app backend alembic upgrade heads  (не менять!)
+docker compose exec --workdir /app backend alembic upgrade heads
 ```
 
 
@@ -59,7 +59,7 @@ docker compose exec --workdir /app backend alembic upgrade heads  (не меня
 "password": "ваш пароль"
 }
 ```
-Токен будет передан в cookie и будет действовать в течение часа. После чего его необходимо обновить.
+Токен будет передан в cookie. Cрок действия 24ч после чего его необходимо обновить.
 
 ### Преобразование wav в mp3
 Нужно отправить файл с расширением .wav методом POST на эндпоинт http://localhost/uploadfile/
