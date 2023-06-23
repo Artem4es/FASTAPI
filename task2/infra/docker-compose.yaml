@@ -10,8 +10,11 @@ services:
 
   backend:
     build:
-      context: ./
+      context: ../src
       dockerfile: Dockerfile
+    volumes:
+      - ../migrations:/app/migrations/
+      - ../alembic.ini:/app/alembic.ini
     restart: always
     ports:
       - "80:8000"

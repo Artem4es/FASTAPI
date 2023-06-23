@@ -32,7 +32,7 @@ docker compose up -d
 Применить миграции (они уже созданы) через alembic:
 
 ```
-docker compose exec backend alembic upgrade heads 
+docker compose exec --workdir /app backend alembic upgrade heads  (не менять!)
 ```
 
 
