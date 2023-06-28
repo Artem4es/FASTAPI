@@ -16,15 +16,16 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from src.audio.models import metadata as audio_metadata
+from src.database import metadata
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from src.auth.models import metadata as auth_metadata
+# from src.auth.models import metadata as auth_metadata
 
 # target_metadata = mymodel.Base.metadata
-target_metadata = [audio_metadata, auth_metadata]
+# target_metadata = [audio_metadata, auth_metadata]
+target_metadata = metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
