@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from auth.base_config import auth_backend
 from auth.manager import auth_backend, fastapi_users
 from auth.schemas import UserCreate, UserRead
 
