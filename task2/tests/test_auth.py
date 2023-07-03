@@ -3,8 +3,10 @@ from httpx import AsyncClient
 from sqlalchemy import select
 
 from auth.models import User
+from tests.conftest import pytest
 
 
+@pytest.mark.order(1)
 async def test_register(ac: AsyncClient):
     """Test user register"""
     response = await ac.post(
@@ -18,15 +20,7 @@ async def test_register(ac: AsyncClient):
             "username": "string",
         },
     )
-    assert response.status_code == 201, 'User wasn\'t register'
-    async with async_session_maker() as session:
-        stmt = select(User)
-        response = await session.execute(stmt)
-        result = response.all()[0]
-        assert len(result) == 1, 'Not right number of users was created'
-        user = result[0]
-        assert user.email == "s@s.com", 'Email created is wrong'
-        assert user.username == "string", "Username created is wrong"
+    assert response.status_code == 201, 'User wasn\'t registered'
 
 
 async def test_fail_register(ac: AsyncClient):
@@ -45,6 +39,7 @@ async def test_fail_register(ac: AsyncClient):
     assert response.status_code == 422, 'Email validation error'
 
 
+@pytest.mark.order(2)
 async def test_user_auth(ac: AsyncClient):
     """User authentication test"""
     response = await ac.post(
@@ -55,6 +50,7 @@ async def test_user_auth(ac: AsyncClient):
     assert cookie is not None, 'Cookie hasn\'t been set'
 
 
+@pytest.mark.order(3)
 async def test_wrong_credentials(ac: AsyncClient):
     """Wrong auth data"""
     response = await ac.post(

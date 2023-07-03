@@ -42,8 +42,8 @@ async def get_record(
 
 @router.post("/uploadfile/", responses=wrong_format)
 async def create_upload_file(
-    file: UploadFile,
     request: Request,
+    file: UploadFile,
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(get_async_session),
 ) -> RespUrlModel:
@@ -53,8 +53,7 @@ async def create_upload_file(
             wav_path, "wb"
         ) as f:  # в данном случае возможно лучше использовать синхронную функ
             # может использовть aiofiles
-            f.write(await file.read())
-            f.close()
+            f.write(await file.read())  # стёр close()
         sound = AudioSegment.from_wav(wav_path)
         new_filename = f'{uuid.uuid4()}.mp3'
         new_path = os.path.join(AUDIO_DIR, "mp3", new_filename)
@@ -66,9 +65,10 @@ async def create_upload_file(
             user_id=user.id,
             session=session,
         )
+
     except (CouldntDecodeError, IndexError):  # IndexError for .jpg
         raise HTTPException(
-            status_code=400,
+            status_code=422,
             detail="Убедитесь, что загружаете файл в формате .wav",
         )
 
