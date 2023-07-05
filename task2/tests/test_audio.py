@@ -1,16 +1,17 @@
 import os
+import uuid
 
 from httpx import AsyncClient
 
-from src.settings import BASE_DIR
-from tests.conftest import pytest
+from tests.conftest import TEST_FILE_NAME, TEST_FILES_DIR
 
 
-@pytest.mark.run(4)
+
 async def test_upload_wav(ac: AsyncClient):
-    """Test .wav file uploading"""
-    filename = 'test.wav'
-    filepath = os.path.join(BASE_DIR, 'tests', 'test_audio', filename)
+    """Test .wav file uploading and downloading"""
+    global id, user
+    filename = TEST_FILE_NAME + '.wav'
+    filepath = os.path.join(TEST_FILES_DIR, filename)
     with open(filepath, 'rb') as file:
         files = {'file': (filename, file)}
         token = dict(ac.cookies)
@@ -18,13 +19,24 @@ async def test_upload_wav(ac: AsyncClient):
             url='/uploadfile/', files=files, cookies=token
         )
     assert response.status_code == 200, 'File upload unsucessfull'
+    a = response.json().get('download_link')
+    id, user = a.split('=')[1:3]
+    id = id.split('&')[0]
+    data = {
+        "id": id,
+        "user": user,
+    }
+    token = dict(ac.cookies)
+    response = await ac.get(url="/record/", cookies=token, params=data)
+
+    assert response.status_code == 200, 'File upload wasn\'t successfull'
 
 
-@pytest.mark.run(5)
+
 async def test_upload_jpg(ac: AsyncClient):
     """Try to load jpg instead of wav"""
-    filename = 'test.jpg'
-    filepath = os.path.join(BASE_DIR, 'tests', 'test_audio', filename)
+    filename = TEST_FILE_NAME + '.jpg'
+    filepath = os.path.join(TEST_FILES_DIR, filename)
     with open(filepath, 'rb') as file:
         token = dict(ac.cookies)
         files = {'file': (filename, file)}
@@ -34,11 +46,11 @@ async def test_upload_jpg(ac: AsyncClient):
     assert response.status_code == 422, 'Image shouldn\'t be uploaded!'
 
 
-@pytest.mark.run(6)
+
 async def test_upload_mp3(ac: AsyncClient):
     """Try to load mp3 instead of wav"""
-    filename = 'test.mp3'
-    filepath = os.path.join(BASE_DIR, 'tests', 'test_audio', filename)
+    filename = TEST_FILE_NAME + '.mp3'
+    filepath = os.path.join(TEST_FILES_DIR, filename)
     with open(filepath, 'rb') as file:
         token = dict(ac.cookies)
         files = {'file': (filename, file)}
@@ -46,3 +58,21 @@ async def test_upload_mp3(ac: AsyncClient):
             url='/uploadfile/', files=files, cookies=token
         )
     assert response.status_code == 422, 'mp3 shouldn\'t be uploaded!'
+
+
+)
+async def test_bad_download(ac: AsyncClient):
+    """Try to download unexisting file"""
+
+    data = {
+        "id": uuid.uuid4(),
+        "user": uuid.uuid4(),
+    }
+
+    token = dict(ac.cookies)
+    response = await ac.get(url="/record/", cookies=token, params=data)
+
+    assert response.status_code == 400, 'Unexisting file was downloaded'
+    assert (
+        response.json().get('detail') == 'У нас нет такого файла :('
+    ), 'Wrong message for unexisting file'

@@ -8,12 +8,12 @@ from pydub.exceptions import CouldntDecodeError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from audio.crud import get_audio, save_audio
+from audio.dependencies import get_mp3_folder, get_wav_folder
 from audio.models import User
 from audio.resoponses import no_file, wrong_format
 from audio.schemas import RespUrlModel
 from auth.manager import current_active_user
 from src.database import get_async_session
-from src.settings import AUDIO_DIR
 
 router = APIRouter()
 
@@ -24,7 +24,7 @@ async def get_record(
     user: uuid.UUID,
     user_obj: User = Depends(current_active_user),
     session: AsyncSession = Depends(get_async_session),
-):
+) -> FileResponse:
     """Returns download link"""
 
     file = await get_audio(id, user, session)
@@ -40,15 +40,20 @@ async def get_record(
     )
 
 
-@router.post("/uploadfile/", responses=wrong_format)
+@router.post(
+    "/uploadfile/",
+    responses=wrong_format,
+)
 async def create_upload_file(
     request: Request,
     file: UploadFile,
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(get_async_session),
+    wav_dir: str = Depends(get_wav_folder),
+    mp3_dir: str = Depends(get_mp3_folder),
 ) -> RespUrlModel:
     try:
-        wav_path = os.path.join(AUDIO_DIR, "wav", file.filename)
+        wav_path = os.path.join(wav_dir, file.filename)
         with open(
             wav_path, "wb"
         ) as f:  # в данном случае возможно лучше использовать синхронную функ
@@ -56,7 +61,7 @@ async def create_upload_file(
             f.write(await file.read())  # стёр close()
         sound = AudioSegment.from_wav(wav_path)
         new_filename = f'{uuid.uuid4()}.mp3'
-        new_path = os.path.join(AUDIO_DIR, "mp3", new_filename)
+        new_path = os.path.join(mp3_dir, new_filename)
         sound.export(new_path, format="mp3")  # правда тут будет тормоз
 
         audio_id = await save_audio(

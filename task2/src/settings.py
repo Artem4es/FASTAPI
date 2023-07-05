@@ -8,6 +8,8 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 AUDIO_DIR = os.path.join(BASE_DIR, 'uploads')
+MP3_DIR = os.path.join(AUDIO_DIR, 'mp3')
+WAV_DIR = os.path.join(AUDIO_DIR, 'wav')
 
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
