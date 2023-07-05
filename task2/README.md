@@ -17,8 +17,13 @@ git clone git@github.com:Artem4es/FASTAPI.git
 cd FASTAPI/task2/infra/
 ```
 
-Cоздать и запустить контейнеры:
+Создать файл .env с содержиимым:
+```
+POSTGRES_PASSWORD=postgres
+DB_HOST=db
+```
 
+Cоздать и запустить контейнеры:
 ```
 docker compose up -d
 ```
