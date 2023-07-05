@@ -14,7 +14,7 @@ git clone git@github.com:Artem4es/FASTAPI.git
 Перейти в папку /infra
 
 ```
-cd task2/infra/
+cd FASTAPI/task2/infra/
 ```
 Создать файл .env с переменными окружения и содержимым:
 
