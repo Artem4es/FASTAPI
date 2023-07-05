@@ -12,6 +12,11 @@ TASK2 -это API реализованный на FastAPI (простите за
 git clone git@github.com:Artem4es/FASTAPI.git
 ```
 
+Перейти в папку /infra:
+```
+cd FASTAPI/task2/infra/
+```
+
 Cоздать и запустить контейнеры:
 
 ```
