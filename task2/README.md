@@ -21,6 +21,21 @@ cd FASTAPI/task2/infra/
 ```
 POSTGRES_PASSWORD=postgres
 DB_HOST=db
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASS=postgres
+
+DB_HOST_TEST=db
+DB_PORT_TEST=5432
+DB_NAME_TEST=testbase
+DB_USER_TEST=postgres
+DB_PASS_TEST=postgres
+
+SECRET_AUTH=e95a3684b9982fcfd46eea716707f80cef515906eb49c4cb961dfde39a41ce21
+
+SMTP_USER=XXXXXXXXXXXX@gmail.com
+SMTP_PASSWORD=XXXXXXXXX
 ```
 
 Cоздать и запустить контейнеры:
