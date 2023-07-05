@@ -11,17 +11,6 @@ TASK2 -это API реализованный на FastAPI (простите за
 ```
 git clone git@github.com:Artem4es/FASTAPI.git
 ```
-Перейти в папку /infra
-
-```
-cd FASTAPI/task2/infra/
-```
-Создать файл .env с переменными окружения и содержимым:
-
-```
-POSTGRES_PASSWORD=postgres
-DB_HOST=db
-```
 
 Cоздать и запустить контейнеры:
 
