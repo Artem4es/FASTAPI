@@ -19,8 +19,8 @@ cd task2/infra/
 Создать файл .env с переменными окружения и содержимым:
 
 ```
-REAL_DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
 POSTGRES_PASSWORD=postgres
+DB_HOST=db
 ```
 
 Cоздать и запустить контейнеры:
