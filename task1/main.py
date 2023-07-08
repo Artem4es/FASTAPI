@@ -35,9 +35,6 @@ async_session = sessionmaker(
 # BLOCK WITH DATABASE MODELS #
 ##############################
 
-
-# class Base(DeclarativeBase):
-#     pass
 Base = declarative_base()
 
 
