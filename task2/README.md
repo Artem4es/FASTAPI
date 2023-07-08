@@ -12,6 +12,22 @@ TASK2 -это API реализованный на FastAPI (простите за
 git clone git@github.com:Artem4es/FASTAPI.git
 ```
 
+Перейти в папку infra и создать файл .env :
+```
+POSTGRES_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASS=postgres
+
+DB_HOST_TEST=db
+DB_PORT_TEST=5432
+DB_NAME_TEST=testbase
+DB_USER_TEST=postgres
+DB_PASS_TEST=postgres
+```
+
 Cоздать и запустить контейнеры из папки infra:
 ```
 docker compose up -d
