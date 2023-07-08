@@ -8,6 +8,7 @@ Create Date: 2023-06-19 19:57:29.083991
 import fastapi_users_db_sqlalchemy
 import sqlalchemy as sa
 from alembic import op
+from sqlalchemy.dialects.postgresql import UUID
 
 # revision identifiers, used by Alembic.
 revision = '2d83a0a91136'
@@ -36,10 +37,10 @@ def upgrade() -> None:
 
     op.create_table(
         'audiofile',
-        sa.Column('id', sa.UUID(), nullable=False),
+        sa.Column('id', UUID(), nullable=False),
         sa.Column('filename', sa.String(), nullable=False),
         sa.Column('filepath', sa.String(), nullable=False),
-        sa.Column('user_id', sa.UUID(), nullable=True),
+        sa.Column('user_id', UUID(), nullable=True),
         sa.ForeignKeyConstraint(
             ['user_id'],
             ['user.id'],

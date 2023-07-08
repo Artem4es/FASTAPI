@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 
 from auth.base_config import auth_backend

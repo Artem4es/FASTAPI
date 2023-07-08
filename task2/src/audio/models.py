@@ -1,11 +1,10 @@
 import uuid
 
-from sqlalchemy import UUID, Column, ForeignKey, MetaData, String
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID
 
 from auth.models import User
-from src.database import Base
-
-metadata = MetaData()
+from src.database import Base, metadata
 
 
 class Audio(Base):
